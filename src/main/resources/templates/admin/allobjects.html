@@ -1,0 +1,252 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>IKEA</title>
+    <!-- <link type="text/css" href="css/home.css"> -->
+</head>
+<style>
+    html {
+        height: 100%;
+    }
+    body {
+        color: #000080;
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        background-color: #f2f2f2;
+        height: 100%;
+        overflow: hidden;
+    }
+    .menu {
+        color: #fff;
+        height: 60pt;
+        width: 100%;
+        padding-left: 12pt;
+        background-color:#000080;
+        position: fixed;
+        display: flex;
+        align-items: center;
+        box-shadow: 0pt 0pt 30pt rgba(0,0,0,0.2);
+    }
+    .menu a {
+        margin-right: 12pt;
+        font-size: 13pt;
+        text-decoration: none;
+    }
+    .menu a:link, .menu a:visited {
+        color: #fff;
+    }
+    .about {
+        background-color: #fdfd96;
+        color: #fff;
+        height: calc(100% - 60pt);
+        padding-top: 60pt;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .inner-about {
+        width: 100%;
+        max-width: 600pt;
+        padding: 10pt;
+    }
+    .inner-about h1 {
+        margin: 0;
+        font-size: 35pt;
+        margin-bottom: -10pt;
+    }
+    .inner-about p {
+        margin: 0;
+        margin-bottom: 8pt;
+        font-size: 15pt;
+    }
+    .social {
+        margin-bottom: 0pt;
+    }
+    .social a {
+        margin-right: 5pt;
+    }
+    .social a:link, .social a:visited {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    table caption {
+        color: #000080;
+        font-size: 1.5em;
+        margin: .5em 0 .75em;
+    }
+    table thead tr {
+        background-color: #ddd;
+    }
+    table tr {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: .35em;
+    }
+
+    table th,
+    table td {
+        padding: .625em;
+        text-align: center;
+        color: #000080;
+    }
+
+    table th {
+        color: #000080;
+        font-size: .85em;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+    }
+
+    @media screen and (max-width: 600px) {
+        table {
+            border: 0;
+        }
+
+        table caption {
+            font-size: 1.3em;
+        }
+
+        table thead {
+            border: none;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+
+        table tr {
+            border-bottom: 3px solid #ddd;
+            display: block;
+            margin-bottom: .25em;
+            padding: 0em;
+        }
+
+        table tr:nth-child(1) {
+            /*background-color: #ddd;*/
+        }
+
+        table tbody tr.active-tr td:nth-child(1) {
+            background-color: #c8004c;
+            color: #fefefe;
+            font-weight: bold;
+        }
+
+        table td {
+            border-bottom: 1px solid #ddd;
+            display: block;
+            font-size: .8em;
+            text-align: right;
+            color: #000080;
+        }
+
+        table td:nth-child(1) {
+            background-color: #ddd;
+        }
+
+        table td::before {
+            /*
+            * aria-label has no advantage, it won't be read inside a table
+            content: attr(aria-label);
+            */
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        table td:last-child {
+            border-bottom: 0;
+        }
+
+        table tbody tr:not(:nth-child(1)) {
+            /*background-color: blue;*/
+            /*margin-top: 0;*/
+        }
+
+        table tbody tr:nth-child(1) {
+            /*background-color: red;*/
+        }
+
+        /*
+        table tbody tr:not(:nth-child(1)) td:not(:nth-child(1)){
+         background-color: green;
+         display: none;
+        }
+        */
+        table tbody tr td:not(:nth-child(1)) {
+
+            display: none;
+        }
+
+        table tbody tr.active-tr td {
+            display: block;
+        }
+    }
+</style>
+
+<body>
+
+<div class="menu">
+    <img src="https://i.pinimg.com/originals/16/01/c1/1601c17aa5081a1ab3e6ed10769d609d.png" height=100% />
+    <a href="/admin/allusers">Users</a>
+    <a href="/admin/allobjects">Products</a>
+    <a href="/admin/rooms">Rooms</a>
+    <a href="/admin/categories">Categories</a>
+    <a href="/admin/createobject">New Product</a>
+    <a href="/admin/allorders">Orders</a>
+    <a href="/login">Log out</a>
+</div>
+
+<div class="about">
+    <h4>
+    <a href="/admin/sortbyprice">Sort products by price</a>
+    </h4>
+    <form method="post"  action="action_page.php" th:object="${objects}" th:action="@{/allobjects}">
+
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>UPDATE PRICE</th>
+                <th>DELETE</th>
+
+            </tr>
+            <tr th:each="object : ${objects}">
+                <td th:text="${object.name}"></td>
+                <td th:text="${object.price}"></td>
+
+
+                <td>
+                    <a th:href="@{/admin/updateprice/{id}(id=${object.id})}">Update price</a>
+
+                </td>
+                <td>
+                    <a th:href="@{/admin/deleteobject/{id}(id=${object.id})}">Delete</a>
+
+                </td>
+            </tr>
+        </table>
+        <h4 th:text="${tableEmpty}" style="color:#ff0000"></h4>
+
+    </form>
+</div>
+
+</body>
+</html>
+
+
